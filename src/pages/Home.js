@@ -1,20 +1,37 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Platform } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TextInput, Platform, FlatList } from 'react-native';
 import { Button } from "../components/Button";
 import { SkillCard } from "../components/SkillCard";
 
 export function Home() {
     const [newSkill, setNewSkill] = useState('');
     const [mySkills, setMySkills] = useState([]);
+    const [greeting, setGreeting] = useState('');
 
     function handleAddNewSkill() {
         setMySkills(oldState => [...oldState, newSkill]);
     }
 
+    useEffect(() => {
+        const currentHour = new Date().getHours();
+
+        if (currentHour < 12) {
+            setGreeting('Good morning');
+        } else if (currentHour >= 12 && currentHour < 18) {
+            setGreeting('Good afternoon');
+        } else {
+            setGreeting('Good evening');
+        }
+    }, []);
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
                 Welcome, Rodrigo
+            </Text>
+
+            <Text style={styles.greetings}>
+                {greeting}
             </Text>
 
             <TextInput
@@ -24,7 +41,7 @@ export function Home() {
                 onChangeText={setNewSkill}
             />
 
-            <Button />
+            <Button onPress={handleAddNewSkill} />
 
             <Text
                 style={[styles.title, { marginVertical: 50 }]}
@@ -32,11 +49,13 @@ export function Home() {
                 MySkills
             </Text>
 
-            {
-                mySkills.map(skill => (
-                    <SkillCard />
-                ))
-            }
+            <FlatList
+                data={mySkills}
+                keyExtractor={item => item}
+                renderItem={({ item }) => (
+                    <SkillCard skill={item} />
+                )}
+            />
         </View>
     );
 }
@@ -61,4 +80,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         borderRadius: 7,
     },
+    greetings: {
+        color: '#FFF',
+    }
 });
