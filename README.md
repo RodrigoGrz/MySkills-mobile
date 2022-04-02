@@ -1,0 +1,1 @@
+`yarn run android` ou `yarn run ios`
